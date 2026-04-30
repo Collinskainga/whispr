@@ -3,34 +3,52 @@
  */
 
 (function () {
-  let currentRoomId   = null;
+  let currentRoomId = null;
   let currentRoomName = null;
   let realtimeChannel = null;
-  let allMessages     = [];
+  let allMessages = [];
 
   /* ── Init (run once on page load) ── */
   function init() {
-    document.getElementById('copy-link-btn').addEventListener('click', copyLink);
-    document.getElementById('btn-share-native').addEventListener('click', shareNative);
-    document.getElementById('btn-export').addEventListener('click', exportAll);
-    document.getElementById('btn-clear-all').addEventListener('click', clearAll);
-    document.getElementById('btn-refresh').addEventListener('click', () => loadMessages(true));
+    document
+      .getElementById("copy-link-btn")
+      .addEventListener("click", copyLink);
+    document
+      .getElementById("btn-share-native")
+      .addEventListener("click", shareNative);
+    document.getElementById("btn-export").addEventListener("click", exportAll);
+    document
+      .getElementById("btn-export-image-dark")
+      .addEventListener("click", () => exportImage("dark"));
+    document
+      .getElementById("btn-export-image-light")
+      .addEventListener("click", () => exportImage("light"));
+    document
+      .getElementById("btn-clear-all")
+      .addEventListener("click", clearAll);
+    document
+      .getElementById("btn-refresh")
+      .addEventListener("click", () => loadMessages(true));
 
     // Message-level actions via event delegation
-    document.getElementById('host-messages').addEventListener('click', (e) => {
-      const actionBtn = e.target.closest('[data-action]');
+    document.getElementById("host-messages").addEventListener("click", (e) => {
+      const actionBtn = e.target.closest("[data-action]");
       if (!actionBtn) return;
 
       const action = actionBtn.dataset.action;
-      if (action === 'share')  openShareModal(actionBtn.dataset.text);
-      if (action === 'delete') deleteSingleMessage(actionBtn.dataset.id);
+      if (action === "share") openShareModal(actionBtn.dataset.text);
+      if (action === "delete") deleteSingleMessage(actionBtn.dataset.id);
     });
 
     // Modal
-    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-    document.getElementById('modal-copy-btn').addEventListener('click', copyModalText);
-    document.getElementById('share-modal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('share-modal')) closeModal();
+    document
+      .getElementById("btn-close-modal")
+      .addEventListener("click", closeModal);
+    document
+      .getElementById("modal-copy-btn")
+      .addEventListener("click", copyModalText);
+    document.getElementById("share-modal").addEventListener("click", (e) => {
+      if (e.target === document.getElementById("share-modal")) closeModal();
     });
   }
 
@@ -43,29 +61,29 @@
     }
 
     currentRoomId = id;
-    Router.showView('host');
-    UI.setNavTag('Host Dashboard');
+    Router.showView("host");
+    UI.setNavTag("Host Dashboard");
 
     // Fetch room details
     const { data: room, error } = await DB.getRoom(id);
 
     if (error || !room) {
-      Router.showView('404');
+      Router.showView("404");
       return;
     }
 
     currentRoomName = room.name;
 
     // Populate header
-    const titleEl   = document.getElementById('host-dash-title');
-    titleEl.childNodes[0].textContent = room.name + ' ';
+    const titleEl = document.getElementById("host-dash-title");
+    titleEl.childNodes[0].textContent = room.name + " ";
 
     // Share link
     const link = getRoomLink(id);
-    document.getElementById('host-share-link').textContent = link;
+    document.getElementById("host-share-link").textContent = link;
 
     // Room code stat
-    document.getElementById('stat-code').textContent = id;
+    document.getElementById("stat-code").textContent = id;
 
     // Load messages
     await loadMessages();
@@ -80,18 +98,20 @@
 
   /* ── Fetch & render messages ── */
   async function loadMessages(showSpinner = false) {
-    const container = document.getElementById('host-messages');
+    const container = document.getElementById("host-messages");
     if (showSpinner) {
-      container.innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
-      const btn = document.getElementById('btn-refresh');
-      btn.classList.add('spinning');
-      setTimeout(() => btn.classList.remove('spinning'), 800);
+      container.innerHTML =
+        '<div class="loading-state"><div class="spinner"></div></div>';
+      const btn = document.getElementById("btn-refresh");
+      btn.classList.add("spinning");
+      setTimeout(() => btn.classList.remove("spinning"), 800);
     }
 
     const { data, error } = await DB.getMessages(currentRoomId);
 
     if (error) {
-      container.innerHTML = '<div class="empty-state"><p>Could not load messages. Try refreshing.</p></div>';
+      container.innerHTML =
+        '<div class="empty-state"><p>Could not load messages. Try refreshing.</p></div>';
       return;
     }
 
@@ -101,24 +121,24 @@
   }
 
   function renderMessages() {
-    const container = document.getElementById('host-messages');
+    const container = document.getElementById("host-messages");
 
     if (!allMessages.length) {
       container.innerHTML = UI.emptyStateHTML();
       return;
     }
 
-    container.innerHTML = allMessages.map(UI.msgCardHTML).join('');
+    container.innerHTML = allMessages.map(UI.msgCardHTML).join("");
   }
 
   function updateStats() {
     const today = new Date().toDateString();
     const todayCount = allMessages.filter(
-      m => new Date(m.created_at).toDateString() === today
+      (m) => new Date(m.created_at).toDateString() === today,
     ).length;
 
-    document.getElementById('stat-total').textContent = allMessages.length;
-    document.getElementById('stat-today').textContent = todayCount;
+    document.getElementById("stat-total").textContent = allMessages.length;
+    document.getElementById("stat-today").textContent = todayCount;
   }
 
   /* ── Actions ── */
@@ -127,7 +147,7 @@
   }
 
   function copyLink() {
-    const btn = document.getElementById('copy-link-btn');
+    const btn = document.getElementById("copy-link-btn");
     UI.copyText(getRoomLink(currentRoomId), btn);
   }
 
@@ -136,65 +156,84 @@
     if (navigator.share) {
       navigator.share({
         title: `Send ${currentRoomName} an anonymous message`,
-        url:   link,
+        url: link,
       });
     } else {
-      const btn = document.getElementById('copy-link-btn');
+      const btn = document.getElementById("copy-link-btn");
       UI.copyText(link, btn);
-      UI.toast('Link copied — paste it anywhere!');
+      UI.toast("Link copied — paste it anywhere!");
     }
   }
 
   function exportAll() {
     if (!allMessages.length) {
-      UI.toast('No messages to export');
+      UI.toast("No messages to export");
       return;
     }
     UI.exportMessages(currentRoomName, allMessages);
   }
 
+  function exportImage(theme) {
+    if (!allMessages.length) {
+      UI.toast("No messages to export");
+      return;
+    }
+    UI.exportMessagesAsImage(currentRoomName, allMessages, theme)
+      .then(() => UI.toast("Image exported!"))
+      .catch(() => UI.toast("Could not export image", "error"));
+  }
+
   async function clearAll() {
-    if (!allMessages.length) { UI.toast('No messages to clear'); return; }
-    if (!confirm('Delete all messages? This cannot be undone.')) return;
+    if (!allMessages.length) {
+      UI.toast("No messages to clear");
+      return;
+    }
+    if (!confirm("Delete all messages? This cannot be undone.")) return;
 
     const { error } = await DB.clearMessages(currentRoomId);
-    if (error) { UI.toast('Could not clear messages', 'error'); return; }
+    if (error) {
+      UI.toast("Could not clear messages", "error");
+      return;
+    }
 
     allMessages = [];
     renderMessages();
     updateStats();
-    UI.toast('All messages cleared');
+    UI.toast("All messages cleared");
   }
 
   async function deleteSingleMessage(msgId) {
     const { error } = await DB.deleteMessage(msgId);
-    if (error) { UI.toast('Could not delete message', 'error'); return; }
+    if (error) {
+      UI.toast("Could not delete message", "error");
+      return;
+    }
 
-    allMessages = allMessages.filter(m => m.id !== msgId);
+    allMessages = allMessages.filter((m) => m.id !== msgId);
     renderMessages();
     updateStats();
-    UI.toast('Message deleted');
+    UI.toast("Message deleted");
   }
 
   /* ── Share modal ── */
-  let modalText = '';
+  let modalText = "";
 
   function openShareModal(text) {
     modalText = text;
-    const preview   = text.length > 200 ? text.slice(0, 200) + '…' : text;
-    const shareSnip = `"${text.slice(0, 100)}${text.length > 100 ? '…' : ''}"`;
+    const preview = text.length > 200 ? text.slice(0, 200) + "…" : text;
+    const shareSnip = `"${text.slice(0, 100)}${text.length > 100 ? "…" : ""}"`;
 
-    document.getElementById('modal-msg-text').textContent = preview;
-    document.getElementById('modal-share-text').textContent = shareSnip;
-    document.getElementById('share-modal').classList.add('open');
+    document.getElementById("modal-msg-text").textContent = preview;
+    document.getElementById("modal-share-text").textContent = shareSnip;
+    document.getElementById("share-modal").classList.add("open");
   }
 
   function closeModal() {
-    document.getElementById('share-modal').classList.remove('open');
+    document.getElementById("share-modal").classList.remove("open");
   }
 
   function copyModalText() {
-    const btn = document.getElementById('modal-copy-btn');
+    const btn = document.getElementById("modal-copy-btn");
     UI.copyText(`"${modalText}"`, btn);
   }
 
