@@ -13,7 +13,7 @@
  * 8. Open index.html in a browser (or deploy to any static host).
  */
 
-const SUPABASE_URL = "https://zvzfwytqubfemccbbtre.supabase.co/rest/v1/"; // e.g. https://xyzabc.supabase.co
+const SUPABASE_URL = "https://zvzfwytqubfemccbbtre.supabase.co"; // e.g. https://xyzabc.supabase.co
 const SUPABASE_ANON_KEY = "sb_publishable_gg5Eke1rGU5P-BrVSSTHOw_Z3dNSMUu"; // long JWT string
 
 /* ── Do not edit below this line ── */
