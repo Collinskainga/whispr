@@ -138,12 +138,15 @@
    */
   function msgCardHTML(msg) {
     return `
-      <div class="msg-card" data-id="${msg.id}">
+      <div class="msg-card" data-id="${msg.id}" data-created-at="${msg.created_at}">
         <div class="msg-card__text">${escapeHtml(msg.text)}</div>
         <div class="msg-card__meta">
           <span class="msg-card__time">${formatTime(msg.created_at)}</span>
           <div class="msg-card__actions">
             <button class="msg-action-btn" data-action="share">Share</button>
+            <button class="msg-action-btn" data-action="copy">Copy</button>
+            <button class="msg-action-btn" data-action="export-dark">Image dark</button>
+            <button class="msg-action-btn" data-action="export-light">Image light</button>
             <button class="msg-action-btn msg-action-btn--danger" data-action="delete" data-id="${msg.id}">Delete</button>
           </div>
         </div>

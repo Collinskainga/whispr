@@ -36,11 +36,38 @@
       if (!actionBtn) return;
 
       const action = actionBtn.dataset.action;
+      const card = actionBtn.closest(".msg-card");
+      const text = card?.querySelector(".msg-card__text")?.textContent || "";
+      const createdAt = card?.dataset.createdAt || new Date().toISOString();
+
       if (action === "share") {
-        const card = actionBtn.closest(".msg-card");
-        const text = card?.querySelector(".msg-card__text")?.textContent || "";
         openShareModal(text);
       }
+
+      if (action === "copy") {
+        UI.copyText(text, actionBtn);
+      }
+
+      if (action === "export-dark") {
+        UI.exportMessagesAsImage(
+          currentRoomName,
+          [{ text, created_at: createdAt }],
+          "dark",
+        )
+          .then(() => UI.toast("Image exported!"))
+          .catch(() => UI.toast("Could not export image", "error"));
+      }
+
+      if (action === "export-light") {
+        UI.exportMessagesAsImage(
+          currentRoomName,
+          [{ text, created_at: createdAt }],
+          "light",
+        )
+          .then(() => UI.toast("Image exported!"))
+          .catch(() => UI.toast("Could not export image", "error"));
+      }
+
       if (action === "delete") deleteSingleMessage(actionBtn.dataset.id);
     });
 
