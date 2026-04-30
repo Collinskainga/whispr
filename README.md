@@ -57,22 +57,25 @@ whispr/
 3. Open `js/config.js` and replace the placeholders:
 
 ```js
-const SUPABASE_URL      = 'https://your-project-id.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR...';
+const SUPABASE_URL = "https://your-project-id.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR...";
 ```
 
 ### 4. Deploy / open
 
 **Option A — Local (no server needed)**  
-Just open `index.html` in a browser. Works as-is for testing.  
+Just open `index.html` in a browser. Works as-is for testing.
+
 > ⚠️ Some browsers block ES modules from `file://`. Use a local server if needed: `npx serve .`
 
-**Option B — Deploy to Netlify (free, 1 minute)**  
+**Option B — Deploy to Netlify (free, 1 minute)**
+
 1. Create a free account at [netlify.com](https://netlify.com).
 2. Drag the entire `whispr/` folder onto the Netlify dashboard.
 3. Done — you get a live HTTPS URL.
 
-**Option C — Deploy to Vercel**  
+**Option C — Deploy to Vercel**
+
 ```bash
 npx vercel
 ```
@@ -80,22 +83,20 @@ npx vercel
 **Option D — GitHub Pages**  
 Push to a GitHub repo, then enable Pages under Settings → Pages.
 
----
+> This repo includes a `404.html` fallback for GitHub Pages so links like `/repo/room=abc` redirect to `/#room=abc` automatically.
 
-## How It Works
-
-| Role | Flow |
-|------|------|
-| **Host** | Creates a room → gets a shareable link → views messages in real-time on the dashboard |
+| Role      | Flow                                                                                    |
+| --------- | --------------------------------------------------------------------------------------- |
+| **Host**  | Creates a room → gets a shareable link → views messages in real-time on the dashboard   |
 | **Guest** | Opens the shared link → types a message → submits anonymously (no account, no tracking) |
 
 ### URL scheme
 
-| URL fragment | View |
-|---|---|
-| `#` (none) | Home page |
+| URL fragment | View                      |
+| ------------ | ------------------------- |
+| `#` (none)   | Home page                 |
 | `#room=<id>` | Guest / send-message view |
-| `#host=<id>` | Host dashboard |
+| `#host=<id>` | Host dashboard            |
 
 ### Real-time
 

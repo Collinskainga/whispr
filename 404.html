@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting...</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, sans-serif;
+        background: #111;
+        color: #f5f5f5;
+        text-align: center;
+        padding: 1.5rem;
+      }
+      a {
+        color: #67d9ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>Redirecting...</h1>
+      <p>
+        If you are not redirected automatically,
+        <a id="manualLink" href="/">click here</a>.
+      </p>
+    </div>
+    <script>
+      (function () {
+        const pathname = window.location.pathname.replace(/\/$/, "");
+        const root = pathname.endsWith("/")
+          ? pathname
+          : pathname.replace(/\/[^/]*$/, "/");
+        const segment = pathname.substring(root.length);
+        let target = root;
+
+        if (segment.startsWith("room=") || segment.startsWith("host=")) {
+          target = root + "#" + segment;
+        }
+
+        const newUrl = target + window.location.search + window.location.hash;
+        document.getElementById("manualLink").href = newUrl;
+        window.location.replace(newUrl);
+      })();
+    </script>
+  </body>
+</html>
