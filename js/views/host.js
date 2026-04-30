@@ -36,7 +36,11 @@
       if (!actionBtn) return;
 
       const action = actionBtn.dataset.action;
-      if (action === "share") openShareModal(actionBtn.dataset.text);
+      if (action === "share") {
+        const card = actionBtn.closest(".msg-card");
+        const text = card?.querySelector(".msg-card__text")?.textContent || "";
+        openShareModal(text);
+      }
       if (action === "delete") deleteSingleMessage(actionBtn.dataset.id);
     });
 

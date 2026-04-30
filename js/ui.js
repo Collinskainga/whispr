@@ -143,7 +143,7 @@
         <div class="msg-card__meta">
           <span class="msg-card__time">${formatTime(msg.created_at)}</span>
           <div class="msg-card__actions">
-            <button class="msg-action-btn" data-action="share" data-text="${escapeHtml(msg.text)}">Share</button>
+            <button class="msg-action-btn" data-action="share">Share</button>
             <button class="msg-action-btn msg-action-btn--danger" data-action="delete" data-id="${msg.id}">Delete</button>
           </div>
         </div>
