@@ -14,24 +14,23 @@ CREATE TABLE IF NOT EXISTS rooms (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Allow anyone to read rooms (needed so guests can look up the room name)
 ALTER TABLE rooms ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Anyone can read rooms" ON rooms;
 CREATE POLICY "Anyone can read rooms"
   ON rooms FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Anyone can create a room" ON rooms;
 CREATE POLICY "Anyone can create a room"
   ON rooms FOR INSERT
   WITH CHECK (true);
 
--- Hosts cannot delete rooms via the API (optional — remove if you want)
--- CREATE POLICY "Anyone can delete a room"
---   ON rooms FOR DELETE
---   USING (true);
-
 
 -- ── 2. MESSAGES ───────────────────────────────────────────────
+-- Ensure pgcrypto exists for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE IF NOT EXISTS messages (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   room_id     TEXT        NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
@@ -42,26 +41,47 @@ CREATE TABLE IF NOT EXISTS messages (
 -- Index for fast per-room lookups
 CREATE INDEX IF NOT EXISTS messages_room_id_idx ON messages (room_id, created_at DESC);
 
--- Row-level security
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Anyone can read messages" ON messages;
 CREATE POLICY "Anyone can read messages"
   ON messages FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Anyone can insert a message" ON messages;
 CREATE POLICY "Anyone can insert a message"
   ON messages FOR INSERT
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Anyone can delete a message" ON messages;
 CREATE POLICY "Anyone can delete a message"
   ON messages FOR DELETE
   USING (true);
 
 
--- ── 3. REALTIME ───────────────────────────────────────────────
--- Enable realtime publication for the messages table so the host
--- dashboard receives new messages instantly without polling.
-ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+-- ── 3. REALTIME (Postgres Changes) ─────────────────────────────
+-- Make sure the publication exists before adding the table
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM pg_catalog.pg_publication
+    WHERE pubname = 'supabase_realtime'
+  ) THEN
+    -- Table add may error if it's already present; handle safely
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+    EXCEPTION
+      WHEN duplicate_object THEN
+        -- already added; ignore
+        NULL;
+    END;
+  ELSE
+    -- If publication doesn't exist (rare), create it then add the table
+    CREATE PUBLICATION supabase_realtime;
+    ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+  END IF;
+END $$;
 
 
 -- ── Done! ─────────────────────────────────────────────────────
