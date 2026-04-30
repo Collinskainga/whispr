@@ -8,18 +8,21 @@
  */
 
 (function () {
-  const VIEWS = ['home', 'setup', 'host', 'guest', '404'];
+  const VIEWS = ["home", "setup", "host", "guest", "404"];
 
   /**
    * Switch the visible view.
    * @param {string} name  One of VIEWS.
    */
   function showView(name) {
-    VIEWS.forEach(v => {
+    VIEWS.forEach((v) => {
       const el = document.getElementById(`view-${v}`);
-      if (el) el.classList.toggle('active', v === name);
+      if (el) el.classList.toggle("active", v === name);
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (name === "home" && window.HomeView?.onShow) {
+      window.HomeView.onShow();
+    }
   }
 
   /**
@@ -29,9 +32,9 @@
    */
   function navigate(hash, push = true) {
     if (push) {
-      history.pushState(null, '', hash || window.location.pathname);
+      history.pushState(null, "", hash || window.location.pathname);
     } else {
-      history.replaceState(null, '', hash || window.location.pathname);
+      history.replaceState(null, "", hash || window.location.pathname);
     }
     dispatch();
   }
@@ -42,33 +45,33 @@
   async function dispatch() {
     const hash = window.location.hash;
 
-    if (hash.startsWith('#room=')) {
+    if (hash.startsWith("#room=")) {
       const id = hash.slice(6).trim();
       if (id) {
         await window.GuestView.open(id);
       } else {
-        showView('home');
+        showView("home");
       }
       return;
     }
 
-    if (hash.startsWith('#host=')) {
+    if (hash.startsWith("#host=")) {
       const id = hash.slice(6).trim();
       if (id) {
         await window.HostView.open(id);
       } else {
-        showView('home');
+        showView("home");
       }
       return;
     }
 
     // Default: home
-    showView('home');
-    UI.setNavTag('Anonymous Messaging');
+    showView("home");
+    UI.setNavTag("Anonymous Messaging");
   }
 
   // Listen for back/forward navigation
-  window.addEventListener('popstate', dispatch);
+  window.addEventListener("popstate", dispatch);
 
   // Expose for use by view modules
   window.Router = { showView, navigate, dispatch };
