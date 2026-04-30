@@ -247,9 +247,13 @@
     const ctx = canvas.getContext("2d");
 
     const contentWidth = width - padding * 2;
+    const isSingle = messages.length === 1;
+    const cardWidth = isSingle ? Math.min(880, contentWidth) : contentWidth;
+    const cardLeftOffset = Math.round((contentWidth - cardWidth) / 2);
+
     const messageLayouts = messages.map((msg) => {
       ctx.font = bodyFont;
-      const lines = wrapText(ctx, msg.text, contentWidth - cardPadding * 2);
+      const lines = wrapText(ctx, msg.text, cardWidth - cardPadding * 2);
       const lineHeight = 42;
       const textHeight = lines.length * lineHeight;
       const cardHeight = cardPadding * 2 + textHeight;
@@ -263,19 +267,18 @@
 
     y += padding - gap;
     canvas.width = width;
-    canvas.height = Math.max(y, 800);
+    canvas.height = Math.max(y, 600);
 
     ctx.fillStyle = colors.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.textAlign = "left";
+    ctx.textAlign = isSingle ? "center" : "left";
     ctx.textBaseline = "top";
-    let cursorY = padding;
+    let cursorY = Math.max(padding, Math.round((canvas.height - y) / 2));
 
     for (const layout of messageLayouts) {
       const cardTop = cursorY;
-      const cardLeft = padding;
-      const cardWidth = contentWidth;
+      const cardLeft = padding + cardLeftOffset;
 
       ctx.fillStyle = colors.card;
       ctx.strokeStyle = colors.border;
@@ -315,8 +318,11 @@
       let textY = cardTop + cardPadding;
       ctx.font = bodyFont;
       ctx.fillStyle = colors.text;
+      const textX = isSingle
+        ? cardLeft + cardWidth / 2
+        : cardLeft + cardPadding;
       for (const line of layout.lines) {
-        ctx.fillText(line, cardLeft + cardPadding, textY);
+        ctx.fillText(line, textX, textY);
         textY += layout.lineHeight;
       }
 

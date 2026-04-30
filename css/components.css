@@ -13,13 +13,23 @@
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
   white-space: nowrap;
   user-select: none;
 }
 
-.btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.btn:active {
+  transform: scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 .btn--primary {
   background: var(--color-accent);
@@ -46,15 +56,22 @@
   font-size: 0.82rem;
 }
 
-.btn--full { width: 100%; }
+.btn--full {
+  width: 100%;
+}
 
-.btn--danger { color: var(--color-danger); }
-.btn--danger:hover { background: var(--color-danger-soft); border-color: var(--color-danger); }
+.btn--danger {
+  color: var(--color-danger);
+}
+.btn--danger:hover {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+}
 
 .btn__spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255,255,255,0.35);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.75s linear infinite;
@@ -151,7 +168,9 @@
   font-size: 0.95rem;
   color: var(--color-ink);
   background: var(--color-paper-card);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   outline: none;
 }
 
@@ -161,9 +180,16 @@
   box-shadow: 0 0 0 3px rgba(201, 98, 47, 0.12);
 }
 
-.field__textarea { min-height: 100px; }
-.field__textarea--tall { min-height: 140px; }
-.field__input--mono { font-family: var(--font-mono); letter-spacing: 0.05em; }
+.field__textarea {
+  min-height: 100px;
+}
+.field__textarea--tall {
+  min-height: 140px;
+}
+.field__input--mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
 
 .char-count {
   font-size: 0.75rem;
@@ -208,8 +234,12 @@
   font-family: var(--font-sans);
 }
 
-.copy-btn:hover { background: var(--color-accent); }
-.copy-btn.copied { background: var(--color-green); }
+.copy-btn:hover {
+  background: var(--color-accent);
+}
+.copy-btn.copied {
+  background: var(--color-green);
+}
 
 /* ── Stats bar ── */
 .stats-bar {
@@ -296,13 +326,14 @@
   background: var(--color-paper-card);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  padding: var(--space-lg) var(--space-lg) var(--space-lg) calc(var(--space-lg) + 6px);
+  padding: var(--space-lg) var(--space-lg) var(--space-lg)
+    calc(var(--space-lg) + 6px);
   position: relative;
   animation: fadeUp 0.3s ease both;
 }
 
 .msg-card::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 12px;
@@ -337,6 +368,27 @@
 .msg-card__actions {
   display: flex;
   gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
+}
+
+.owned-room {
+  background: var(--color-paper-warm);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.owned-room__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.owned-room__code {
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
 }
 
 .msg-action-btn {
@@ -387,7 +439,10 @@
   stroke-width: 1.5;
 }
 
-.empty-state p { font-size: 0.9rem; line-height: 1.7; }
+.empty-state p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
 
 /* ── Modal ── */
 .modal-overlay {
@@ -497,8 +552,17 @@
 }
 
 @media (max-width: 480px) {
-  .stats-bar { grid-template-columns: repeat(2, 1fr); }
-  .stats-bar .stat-card:last-child { grid-column: span 2; }
-  .btn-row, .action-row { flex-direction: column; }
-  .btn-row .btn { width: 100%; }
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stats-bar .stat-card:last-child {
+    grid-column: span 2;
+  }
+  .btn-row,
+  .action-row {
+    flex-direction: column;
+  }
+  .btn-row .btn {
+    width: 100%;
+  }
 }
