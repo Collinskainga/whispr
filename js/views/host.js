@@ -18,12 +18,6 @@
       .addEventListener("click", shareNative);
     document.getElementById("btn-export").addEventListener("click", exportAll);
     document
-      .getElementById("btn-export-image-dark")
-      .addEventListener("click", () => exportImage("dark"));
-    document
-      .getElementById("btn-export-image-light")
-      .addEventListener("click", () => exportImage("light"));
-    document
       .getElementById("btn-clear-all")
       .addEventListener("click", clearAll);
     document
@@ -202,16 +196,6 @@
       return;
     }
     UI.exportMessages(currentRoomName, allMessages);
-  }
-
-  function exportImage(theme) {
-    if (!allMessages.length) {
-      UI.toast("No messages to export");
-      return;
-    }
-    UI.exportMessagesAsImage(currentRoomName, allMessages, theme)
-      .then(() => UI.toast("Image exported!"))
-      .catch(() => UI.toast("Could not export image", "error"));
   }
 
   async function clearAll() {

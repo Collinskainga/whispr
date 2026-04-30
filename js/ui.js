@@ -247,32 +247,16 @@
     const ctx = canvas.getContext("2d");
 
     const contentWidth = width - padding * 2;
-    ctx.font = titleFont;
-    const titleLines = wrapText(ctx, `Room: ${roomName}`, contentWidth);
-
-    ctx.font = metaFont;
-    const subtitleLines = wrapText(
-      ctx,
-      `Exported ${new Date().toLocaleString()}`,
-      contentWidth,
-    );
-
     const messageLayouts = messages.map((msg) => {
       ctx.font = bodyFont;
       const lines = wrapText(ctx, msg.text, contentWidth - cardPadding * 2);
       const lineHeight = 42;
       const textHeight = lines.length * lineHeight;
-      const metaHeight = 28;
-      const cardHeight = cardPadding * 2 + textHeight + 24 + metaHeight;
-      return { msg, lines, cardHeight, textHeight, lineHeight };
+      const cardHeight = cardPadding * 2 + textHeight;
+      return { msg, lines, cardHeight, lineHeight };
     });
 
     let y = padding;
-    y += titleLines.length * 52;
-    y += 18;
-    y += subtitleLines.length * 30;
-    y += 40;
-
     for (const layout of messageLayouts) {
       y += layout.cardHeight + gap;
     }
@@ -284,24 +268,9 @@
     ctx.fillStyle = colors.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = titleFont;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillStyle = colors.accent;
     let cursorY = padding;
-    titleLines.forEach((line) => {
-      ctx.fillText(line, padding, cursorY);
-      cursorY += 52;
-    });
-
-    ctx.fillStyle = colors.secondary;
-    subtitleLines.forEach((line) => {
-      ctx.font = metaFont;
-      ctx.fillText(line, padding, cursorY);
-      cursorY += 30;
-    });
-
-    cursorY += 32;
 
     for (const layout of messageLayouts) {
       const cardTop = cursorY;
@@ -350,15 +319,6 @@
         ctx.fillText(line, cardLeft + cardPadding, textY);
         textY += layout.lineHeight;
       }
-
-      textY += 18;
-      ctx.font = metaFont;
-      ctx.fillStyle = colors.secondary;
-      ctx.fillText(
-        formatTime(layout.msg.created_at),
-        cardLeft + cardPadding,
-        textY,
-      );
 
       cursorY += layout.cardHeight + gap;
     }
