@@ -1,408 +1,212 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Whispr — Anonymous Messaging</title>
-    <meta
-      name="description"
-      content="Create a room, share a link, and collect honest anonymous messages from anyone. No sign-in required."
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kova — Chat with anyone</title>
+  <meta name="description" content="Kova — private 1-on-1 messaging. Sign up and start chatting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
-      rel="stylesheet"
-    />
+<!-- ── AUTH SCREEN ── -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-bg">
+    <div class="auth-orb auth-orb--1"></div>
+    <div class="auth-orb auth-orb--2"></div>
+    <div class="auth-orb auth-orb--3"></div>
+    <div class="auth-grid"></div>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <div class="auth-brand__mark">K</div>
+      <span class="auth-brand__name">Kova</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Sign in</button>
+      <button class="auth-tab" data-tab="signup">Create account</button>
+    </div>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/reset.css" />
-    <link rel="stylesheet" href="css/variables.css" />
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/views.css" />
-    <link rel="stylesheet" href="css/animations.css" />
-
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  </head>
-  <body>
-    <!-- ── NAVIGATION ── -->
-    <nav class="nav" id="main-nav">
-      <div class="nav__logo">
-        <span class="nav__logo-dot"></span>
-        Whispr
+    <!-- Login -->
+    <div class="auth-form active" id="form-login">
+      <div class="field">
+        <label class="field__label" for="login-email">Email</label>
+        <input class="field__input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
       </div>
-      <span class="nav__tag" id="nav-tag">Anonymous Messaging</span>
-    </nav>
+      <div class="field">
+        <label class="field__label" for="login-password">Password</label>
+        <input class="field__input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn btn--primary btn--full" id="btn-login">
+        <span class="btn__text">Sign in</span>
+        <span class="btn__spinner hidden"></span>
+      </button>
+    </div>
 
-    <!-- ── VIEWS ── -->
-    <main class="main-content">
-      <!-- HOME -->
-      <div class="view active" id="view-home">
-        <section class="hero">
-          <p class="hero__eyebrow">No accounts. No tracking.</p>
-          <h1 class="hero__title">Hear what people <em>really</em> think</h1>
-          <p class="hero__subtitle">
-            Create a room, share your link, and collect honest anonymous
-            messages from anyone — no sign-in required.
-          </p>
-          <div class="hero__cta">
-            <button class="btn btn--primary" id="btn-create-room">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Create my room
-            </button>
-            <button class="btn btn--ghost" id="btn-have-code">
-              I have a code
-            </button>
-          </div>
-        </section>
+    <!-- Sign up -->
+    <div class="auth-form" id="form-signup">
+      <div class="field">
+        <label class="field__label" for="signup-name">Display name</label>
+        <input class="field__input" type="text" id="signup-name" placeholder="How you'll appear to others" maxlength="40" />
+      </div>
+      <div class="field">
+        <label class="field__label" for="signup-email">Email</label>
+        <input class="field__input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label class="field__label" for="signup-password">Password</label>
+        <input class="field__input" type="password" id="signup-password" placeholder="Min. 6 characters" autocomplete="new-password" />
+      </div>
+      <button class="btn btn--primary btn--full" id="btn-signup">
+        <span class="btn__text">Create account</span>
+        <span class="btn__spinner hidden"></span>
+      </button>
+    </div>
 
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-card__icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
-            <h3>Truly anonymous</h3>
-            <p>No names, no accounts, no tracking of who sent what.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-card__icon">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                />
-                <path
-                  d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                />
-              </svg>
-            </div>
-            <h3>Shareable link</h3>
-            <p>One link — copy and send it anywhere. Anyone can message you.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-card__icon">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                />
-              </svg>
-            </div>
-            <h3>Real-time inbox</h3>
-            <p>
-              Messages arrive instantly. Read and share them as they come in.
-            </p>
-          </div>
+    <p class="auth-error hidden" id="auth-error"></p>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="screen-app" class="screen">
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <div class="sidebar__brand">
+          <div class="sidebar__brand-mark">K</div>
+          <span class="sidebar__brand-name">Kova</span>
         </div>
+        <button class="icon-btn" id="btn-new-chat" title="New conversation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
 
-        <div class="card owned-rooms hidden" id="owned-rooms-panel">
-          <h2 class="card__title">Your hosted rooms</h2>
-          <p class="card__intro">
-            Open rooms you are currently hosting without needing a code.
-          </p>
-          <div id="owned-room-list"></div>
-        </div>
-
-        <!-- Enter code panel -->
-        <div class="code-panel hidden" id="enter-code-panel">
-          <div class="card">
-            <h2 class="card__title">Open a room by code</h2>
-            <div class="field">
-              <label class="field__label" for="guest-code-input"
-                >Room code</label
-              >
-              <input
-                class="field__input field__input--mono"
-                type="text"
-                id="guest-code-input"
-                placeholder="e.g. abc123de"
-                maxlength="20"
-                autocomplete="off"
-              />
-            </div>
-            <div class="btn-row">
-              <button
-                class="btn btn--primary"
-                id="btn-open-code"
-                style="flex: 1"
-              >
-                Open room
-              </button>
-              <button class="btn btn--ghost" id="btn-cancel-code">
-                Cancel
-              </button>
-            </div>
-          </div>
+      <div class="sidebar__search">
+        <div class="search-box">
+          <svg class="search-box__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input class="search-box__input" type="text" id="search-input" placeholder="Search or start new chat…" autocomplete="off" />
         </div>
       </div>
 
-      <!-- SETUP -->
-      <div class="view" id="view-setup">
-        <div class="card">
-          <h2 class="card__title">
-            Create your room
-            <span class="badge badge--host">Host</span>
-          </h2>
-          <p class="card__intro">
-            Give your room a name so senders know who they're messaging. Your
-            room is hosted online — share the link with anyone.
-          </p>
-          <div class="field">
-            <label class="field__label" for="host-name-input"
-              >Your name or room title</label
-            >
-            <input
-              class="field__input"
-              type="text"
-              id="host-name-input"
-              placeholder="e.g. Alex, Team Feedback, Ask Me Anything…"
-              maxlength="60"
-              autocomplete="off"
-            />
-          </div>
-          <div class="field">
-            <label class="field__label" for="host-welcome-input">
-              Welcome message <span class="field__label-hint">(optional)</span>
-            </label>
-            <textarea
-              class="field__textarea"
-              id="host-welcome-input"
-              placeholder="Tell senders what kind of messages you'd like…"
-            ></textarea>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn--primary" id="btn-do-create" style="flex: 1">
-              <span class="btn__text">Create room &amp; get link</span>
-              <span class="btn__spinner hidden"></span>
-            </button>
-            <button class="btn btn--ghost" id="btn-setup-back">Back</button>
-          </div>
+      <!-- Search results -->
+      <div class="search-results hidden" id="search-results"></div>
+
+      <!-- Conversations list -->
+      <div class="conv-list" id="conv-list">
+        <div class="conv-list__empty">
+          <p>No conversations yet.</p>
+          <p>Search for someone to start chatting.</p>
         </div>
       </div>
 
-      <!-- HOST DASHBOARD -->
-      <div class="view" id="view-host">
-        <div class="card">
-          <h2 class="card__title" id="host-dash-title">
-            Your Room
-            <span class="badge badge--host">Host</span>
-          </h2>
-          <p class="card__intro">
-            Share this link — anyone with it can send you an anonymous message.
-          </p>
-          <div class="link-box" id="host-link-box">
-            <span class="link-box__text" id="host-share-link"></span>
-            <button class="copy-btn" id="copy-link-btn">Copy</button>
-          </div>
-          <div class="action-row">
-            <button class="btn btn--ghost btn--sm" id="btn-share-native">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-              </svg>
-              Share
-            </button>
-            <button class="btn btn--ghost btn--sm" id="btn-export">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Export
-            </button>
-            <button
-              class="btn btn--ghost btn--sm btn--danger"
-              id="btn-clear-all"
-            >
-              Clear all
-            </button>
+      <div class="sidebar__footer">
+        <div class="sidebar__me" id="sidebar-me">
+          <div class="avatar" id="me-avatar"></div>
+          <div class="sidebar__me-info">
+            <span class="sidebar__me-name" id="me-name">—</span>
+            <span class="sidebar__me-handle" id="me-handle">—</span>
           </div>
         </div>
+        <button class="icon-btn icon-btn--danger" id="btn-signout" title="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </aside>
 
-        <div class="stats-bar">
-          <div class="stat-card">
-            <div class="stat-card__value" id="stat-total">—</div>
-            <div class="stat-card__label">Messages</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card__value" id="stat-today">—</div>
-            <div class="stat-card__label">Today</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card__value" id="stat-code">—</div>
-            <div class="stat-card__label">Room Code</div>
-          </div>
-        </div>
+    <!-- CHAT PANEL -->
+    <main class="chat-panel" id="chat-panel">
 
-        <div class="section-header">
-          <span class="section-header__title">Inbox</span>
-          <button class="refresh-btn" id="btn-refresh">
-            <svg viewBox="0 0 24 24">
-              <path d="M1 4v6h6" />
-              <path d="M23 20v-6h-6" />
-              <path
-                d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"
-              />
+      <!-- Empty / welcome state -->
+      <div class="chat-welcome" id="chat-welcome">
+        <div class="chat-welcome__mark">K</div>
+        <h2 class="chat-welcome__title">Welcome to Kova</h2>
+        <p class="chat-welcome__sub">Select a conversation or search for someone to start chatting.</p>
+      </div>
+
+      <!-- Active chat -->
+      <div class="chat-view hidden" id="chat-view">
+        <div class="chat-header" id="chat-header">
+          <button class="icon-btn back-btn" id="btn-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"/>
             </svg>
-            Refresh
           </button>
+          <div class="chat-header__avatar" id="chat-avatar"></div>
+          <div class="chat-header__info">
+            <span class="chat-header__name" id="chat-name"></span>
+            <span class="chat-header__handle" id="chat-handle"></span>
+          </div>
         </div>
 
-        <div class="messages-list" id="host-messages">
-          <div class="loading-state">
+        <div class="messages-area" id="messages-area">
+          <div class="messages-loading">
             <div class="spinner"></div>
           </div>
         </div>
-      </div>
 
-      <!-- GUEST VIEW -->
-      <div class="view" id="view-guest">
-        <div class="card">
-          <div class="guest-header">
-            <div class="guest-header__eyebrow">You're messaging</div>
-            <div class="guest-header__name" id="guest-host-name"></div>
-            <p class="guest-header__welcome" id="guest-welcome-msg"></p>
-            <div class="anon-seal">
-              <svg
-                viewBox="0 0 24 24"
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              <span>Your message is 100% anonymous</span>
-            </div>
-          </div>
-
-          <div id="guest-form">
-            <div class="field">
-              <label class="field__label" for="guest-msg-input"
-                >Your message</label
-              >
-              <textarea
-                class="field__textarea field__textarea--tall"
-                id="guest-msg-input"
-                placeholder="Write anything…"
-                maxlength="800"
-              ></textarea>
-              <div class="char-count"><span id="char-count">0</span> / 800</div>
-            </div>
-            <button class="btn btn--primary btn--full" id="btn-send-msg">
-              <span class="btn__text">Send anonymously</span>
-              <span class="btn__spinner hidden"></span>
-            </button>
-          </div>
-
-          <div class="success-screen hidden" id="guest-success">
-            <div class="success-screen__icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-            <h2 class="success-screen__title">Message sent!</h2>
-            <p class="success-screen__body">
-              Your anonymous message has been delivered. The recipient cannot
-              see who you are.
-            </p>
-            <button class="btn btn--ghost" id="btn-send-another">
-              Send another
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- NOT FOUND -->
-      <div class="view" id="view-404">
-        <div class="not-found">
-          <div class="not-found__icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
+        <div class="composer" id="composer">
+          <textarea class="composer__input" id="msg-input" placeholder="Message…" rows="1" maxlength="2000"></textarea>
+          <button class="composer__send" id="btn-send" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
             </svg>
-          </div>
-          <h2>Room not found</h2>
-          <p>This room may have been deleted or the link is incorrect.</p>
-          <button class="btn btn--primary" id="btn-404-home">Go home</button>
-        </div>
-      </div>
-    </main>
-
-    <!-- SHARE MODAL -->
-    <div class="modal-overlay" id="share-modal" aria-hidden="true">
-      <div class="modal" role="dialog" aria-modal="true">
-        <h3 class="modal__title">Share this message</h3>
-        <p class="modal__body">
-          Copy and share this anonymous message anywhere.
-        </p>
-        <div class="modal__msg-preview" id="modal-msg-text"></div>
-        <div class="link-box">
-          <span class="link-box__text" id="modal-share-text"></span>
-          <button class="copy-btn" id="modal-copy-btn">Copy</button>
-        </div>
-        <div class="modal__footer">
-          <button class="btn btn--ghost btn--sm" id="btn-close-modal">
-            Close
           </button>
         </div>
       </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NEW CHAT MODAL -->
+<div class="modal-overlay" id="modal-new-chat" aria-hidden="true">
+  <div class="modal">
+    <div class="modal__header">
+      <h3 class="modal__title">New conversation</h3>
+      <button class="icon-btn" id="btn-close-modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
+    <div class="field">
+      <label class="field__label" for="modal-search">Search by username or name</label>
+      <input class="field__input" type="text" id="modal-search" placeholder="e.g. john1234" autocomplete="off" />
+    </div>
+    <div class="modal-results" id="modal-results">
+      <p class="modal-results__hint">Type to search for people</p>
+    </div>
+  </div>
+</div>
 
-    <!-- TOAST -->
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <!-- Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/views/home.js"></script>
-    <script src="js/views/setup.js"></script>
-    <script src="js/views/host.js"></script>
-    <script src="js/views/guest.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/app.js"></script>
+</body>
 </html>
