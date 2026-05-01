@@ -1,70 +1,68 @@
-/* ── KOVA DESIGN TOKENS ── */
+/* ── DESIGN TOKENS ── */
 :root {
-  /* Brand */
-  --kova-accent:       #4f46e5;
-  --kova-accent-light: #6366f1;
-  --kova-accent-dark:  #3730a3;
-  --kova-accent-soft:  rgba(79,70,229,0.12);
-  --kova-accent-glow:  rgba(99,102,241,0.3);
+  /* Colors */
+  --color-ink:          #1a1612;
+  --color-ink-soft:     #4a4540;
+  --color-ink-muted:    #8a8480;
+  --color-paper:        #faf8f5;
+  --color-paper-warm:   #f2ede6;
+  --color-paper-card:   #ffffff;
+  --color-line:         #e8e2d8;
 
-  /* Surface */
-  --bg:           #0c0c0f;
-  --bg-2:         #111116;
-  --bg-3:         #18181f;
-  --surface:      #1c1c24;
-  --surface-2:    #22222c;
-  --surface-3:    #2a2a36;
-  --border:       rgba(255,255,255,0.07);
-  --border-light: rgba(255,255,255,0.12);
+  --color-accent:       #c9622f;
+  --color-accent-soft:  #f5e8e0;
+  --color-accent-dark:  #9e4a22;
 
-  /* Text */
-  --text:         #f0eeff;
-  --text-soft:    #a8a4c0;
-  --text-muted:   #635f7a;
+  --color-green:        #3a7d5c;
+  --color-green-soft:   #e4f0ea;
 
-  /* Bubbles */
-  --bubble-me:    #4f46e5;
-  --bubble-them:  #1e1e28;
-
-  /* Status */
-  --green:        #22c55e;
-  --danger:       #ef4444;
+  --color-danger:       #b93535;
+  --color-danger-soft:  #fce9e9;
 
   /* Typography */
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body:    'Manrope', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'DM Sans', system-ui, sans-serif;
+  --font-mono:  'Courier New', Courier, monospace;
 
   /* Spacing */
-  --sp-1: 0.25rem;
-  --sp-2: 0.5rem;
-  --sp-3: 0.75rem;
-  --sp-4: 1rem;
-  --sp-5: 1.25rem;
-  --sp-6: 1.5rem;
-  --sp-8: 2rem;
-  --sp-10: 2.5rem;
-  --sp-12: 3rem;
+  --space-xs:   0.25rem;
+  --space-sm:   0.5rem;
+  --space-md:   1rem;
+  --space-lg:   1.5rem;
+  --space-xl:   2rem;
+  --space-2xl:  3rem;
+  --space-3xl:  4rem;
 
-  /* Radii */
-  --r-sm:   6px;
-  --r-md:   12px;
-  --r-lg:   18px;
-  --r-xl:   24px;
-  --r-full: 9999px;
+  /* Border radius */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md:  0 4px 20px rgba(0,0,0,0.5);
-  --shadow-lg:  0 12px 48px rgba(0,0,0,0.6);
-  --shadow-accent: 0 4px 24px rgba(79,70,229,0.35);
+  --shadow-sm:  0 1px 3px rgba(26, 22, 18, 0.08);
+  --shadow-md:  0 4px 16px rgba(26, 22, 18, 0.10);
+  --shadow-lg:  0 8px 32px rgba(26, 22, 18, 0.14);
 
   /* Layout */
-  --sidebar-w: 320px;
-  --header-h:  64px;
-  --composer-h: 72px;
+  --content-max-width: 700px;
+  --nav-height: 64px;
 
   /* Transitions */
-  --t-fast:   0.12s ease;
-  --t-normal: 0.2s ease;
-  --t-slow:   0.35s ease;
+  --transition-fast:   0.15s ease;
+  --transition-normal: 0.22s ease;
+  --transition-slow:   0.35s ease;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ink:          #f0ece6;
+    --color-ink-soft:     #c0b8b0;
+    --color-ink-muted:    #807870;
+    --color-paper:        #1a1714;
+    --color-paper-warm:   #221f1b;
+    --color-paper-card:   #252220;
+    --color-line:         #35302a;
+  }
 }

@@ -17,4 +17,4 @@ const SUPABASE_URL = "https://zvzfwytqubfemccbbtre.supabase.co"; // e.g. https:/
 const SUPABASE_ANON_KEY = "sb_publishable_gg5Eke1rGU5P-BrVSSTHOw_Z3dNSMUu"; // long JWT string
 
 /* ── Do not edit below this line ── */
-window.__KOVA_CONFIG__ = { SUPABASE_URL, SUPABASE_ANON_KEY };
+window.__WHISPR_CONFIG__ = { SUPABASE_URL, SUPABASE_ANON_KEY };

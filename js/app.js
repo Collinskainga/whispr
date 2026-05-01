@@ -1,59 +1,58 @@
 /**
- * app.js — Entry point. Manages auth state & screen switching.
+ * app.js — Application entry point.
+ * Initialises all view modules and kicks off routing.
  */
+
 (function () {
   function boot() {
-    const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.__KOVA_CONFIG__ || {};
+    // Safety check — make sure Supabase and config loaded correctly
+    const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.__WHISPR_CONFIG__ || {};
 
-    if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    if (
+      !SUPABASE_URL ||
+      SUPABASE_URL === 'YOUR_SUPABASE_URL' ||
+      !SUPABASE_ANON_KEY ||
+      SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'
+    ) {
       document.body.innerHTML = `
-        <div style="font-family:system-ui,sans-serif;max-width:520px;margin:80px auto;padding:2rem;text-align:center;color:#f0eeff;">
-          <div style="width:56px;height:56px;background:#4f46e5;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;margin:0 auto 1.5rem;">K</div>
-          <h2 style="margin-bottom:1rem;font-size:1.4rem;">Setup required</h2>
-          <p style="color:#a8a4c0;line-height:1.8;">
-            Open <code style="background:#1c1c24;padding:2px 6px;border-radius:4px;">js/config.js</code> and add your
-            <strong style="color:#f0eeff;">Supabase URL</strong> and <strong style="color:#f0eeff;">anon key</strong>.<br><br>
-            Then run <code style="background:#1c1c24;padding:2px 6px;border-radius:4px;">schema.sql</code> in the Supabase SQL Editor.<br><br>
-            <a href="https://supabase.com" target="_blank" style="color:#6366f1;">Create a free Supabase project →</a>
+        <div style="
+          font-family: system-ui, sans-serif;
+          max-width: 560px;
+          margin: 80px auto;
+          padding: 2rem;
+          text-align: center;
+          color: #333;
+        ">
+          <h2 style="margin-bottom:1rem;">⚙️ Setup required</h2>
+          <p style="line-height:1.7;color:#666;">
+            Open <code>js/config.js</code> and paste your
+            <strong>Supabase URL</strong> and <strong>anon key</strong>.<br><br>
+            Don't have a Supabase project yet?
+            <a href="https://supabase.com" target="_blank" rel="noopener" style="color:#c9622f;">
+              Create one free at supabase.com
+            </a> — it only takes 2 minutes.<br><br>
+            Then run the SQL in <code>schema.sql</code> to create the tables.
           </p>
         </div>`;
-      document.body.style.cssText = 'background:#0c0c0f;min-height:100vh;display:flex;align-items:center;justify-content:center;';
       return;
     }
 
-    // Init modules
-    Auth.init();
+    // Initialise view modules (attach event listeners)
+    HomeView.init();
+    SetupView.init();
+    HostView.init();
+    GuestView.init();
 
-    // Listen for auth changes
-    DB.onAuthChange(async (session) => {
-      if (session?.user) {
-        await showApp(session.user);
-      } else {
-        showAuth();
-      }
+    // Handle 404 home button
+    document.getElementById('btn-404-home').addEventListener('click', () => {
+      Router.navigate('');
     });
+
+    // Kick off routing from the current URL hash
+    Router.dispatch();
   }
 
-  async function showApp(user) {
-    // Fetch profile
-    const { data: profile, error } = await DB.getProfile(user.id);
-    if (error || !profile) {
-      UI.toast('Could not load profile. Please try again.', 'error');
-      await DB.signOut();
-      return;
-    }
-
-    document.getElementById('screen-auth').classList.remove('active');
-    document.getElementById('screen-app').classList.add('active');
-
-    Chat.init(profile);
-  }
-
-  function showAuth() {
-    document.getElementById('screen-app').classList.remove('active');
-    document.getElementById('screen-auth').classList.add('active');
-  }
-
+  // Run after DOM is fully parsed
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {

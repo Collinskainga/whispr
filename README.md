@@ -1,97 +1,135 @@
-# Kova — Private Messaging Platform
+# Whispr — Anonymous Messaging App
 
-A WhatsApp-style 1-on-1 messaging web app with public accounts, real-time chat, and a polished dark UI. Powered by **Supabase** (free tier). No server required.
+A fully hosted, real-time anonymous messaging web application.  
+No backend server required — powered by **Supabase** (free tier).
 
 ---
 
 ## Project Structure
 
 ```
-kova/
-├── index.html          # App shell (auth + chat UI)
-├── schema.sql          # Supabase database schema — run once
-├── README.md
+whispr/
+├── index.html              # Main HTML shell & all views
+├── schema.sql              # Supabase database schema (run once)
+├── README.md               # This file
 │
 ├── css/
-│   ├── reset.css
-│   ├── variables.css   # All design tokens (colors, spacing, etc.)
-│   ├── base.css        # Global styles, shared components
-│   ├── auth.css        # Auth screen styles
-│   ├── app.css         # Chat layout, sidebar, bubbles, composer
-│   └── animations.css
+│   ├── reset.css           # CSS reset
+│   ├── variables.css       # Design tokens (colors, spacing, fonts)
+│   ├── base.css            # Global layout & utility styles
+│   ├── components.css      # Reusable components (buttons, cards, modals…)
+│   ├── views.css           # View-specific styles (hero, guest, features…)
+│   └── animations.css      # Keyframe animations & transitions
 │
 └── js/
-    ├── config.js       # ⚙️  YOUR SUPABASE CREDENTIALS GO HERE
-    ├── db.js           # All Supabase auth + database calls
-    ├── ui.js           # Shared UI helpers (toast, avatars, time)
-    ├── auth.js         # Sign in / Sign up logic
-    ├── chat.js         # Conversations + messaging logic
-    └── app.js          # Entry point, auth state management
+    ├── config.js           # ⚙️  YOUR SUPABASE CREDENTIALS GO HERE
+    ├── db.js               # All database interactions (Supabase client)
+    ├── ui.js               # Shared UI helpers (toast, copy, format…)
+    ├── router.js           # Hash-based client-side router
+    ├── app.js              # App bootstrap & entry point
+    └── views/
+        ├── home.js         # Home page interactions
+        ├── setup.js        # Room creation flow
+        ├── host.js         # Host dashboard (messages, share, export)
+        └── guest.js        # Anonymous message submission
 ```
 
 ---
 
-## Quick Setup (5 minutes)
+## Quick Start (5 minutes)
 
-### 1. Create a Supabase project
-1. Go to [supabase.com](https://supabase.com) → sign up → **New project**
-2. Wait ~60 seconds for it to provision
+### 1. Create a Supabase project (free)
 
-### 2. Run the database schema
-1. In Supabase → **SQL Editor** → **New query**
-2. Paste the contents of `schema.sql` → **Run**
+1. Go to [https://supabase.com](https://supabase.com) and sign up / log in.
+2. Click **New project** → choose a name, region, and password → **Create**.
+3. Wait ~60 seconds for the project to provision.
+
+### 2. Set up the database
+
+1. In your Supabase dashboard, go to **SQL Editor** → **New query**.
+2. Copy the entire contents of `schema.sql` and paste it in.
+3. Click **Run** — you should see "Success. No rows returned."
 
 ### 3. Add your credentials
-1. Supabase → **Project Settings** → **API**
-2. Copy **Project URL** and **anon public** key
-3. Open `js/config.js` and paste them:
+
+1. In Supabase, go to **Project Settings** → **API**.
+2. Copy the **Project URL** and **anon public** key.
+3. Open `js/config.js` and replace the placeholders:
+
 ```js
-const SUPABASE_URL      = "https://your-project.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGci...";
+const SUPABASE_URL = "https://your-project-id.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR...";
 ```
 
-### 4. Enable Email Auth
-- Supabase → **Authentication** → **Providers** → **Email** should be enabled by default.
-- For local testing without email confirmation: **Auth** → **Settings** → disable "Enable email confirmations"
+### 4. Deploy / open
 
-### 5. Deploy
-- **Local**: `npx serve .` (or just open index.html in a browser)
-- **Netlify**: Drag the `kova/` folder onto netlify.com — instant HTTPS URL
-- **Vercel**: `npx vercel` from the kova directory
+**Option A — Local (no server needed)**  
+Just open `index.html` in a browser. Works as-is for testing.
+
+> ⚠️ Some browsers block ES modules from `file://`. Use a local server if needed: `npx serve .`
+
+**Option B — Deploy to Netlify (free, 1 minute)**
+
+1. Create a free account at [netlify.com](https://netlify.com).
+2. Drag the entire `whispr/` folder onto the Netlify dashboard.
+3. Done — you get a live HTTPS URL.
+
+**Option C — Deploy to Vercel**
+
+```bash
+npx vercel
+```
+
+**Option D — GitHub Pages**  
+Push to a GitHub repo, then enable Pages under Settings → Pages.
+
+> This repo includes a `404.html` fallback for GitHub Pages so links like `/repo/room=abc` redirect to `/#room=abc` automatically.
+
+| Role      | Flow                                                                                    |
+| --------- | --------------------------------------------------------------------------------------- |
+| **Host**  | Creates a room → gets a shareable link → views messages in real-time on the dashboard   |
+| **Guest** | Opens the shared link → types a message → submits anonymously (no account, no tracking) |
+
+### URL scheme
+
+| URL fragment | View                      |
+| ------------ | ------------------------- |
+| `#` (none)   | Home page                 |
+| `#room=<id>` | Guest / send-message view |
+| `#host=<id>` | Host dashboard            |
+
+### Real-time
+
+The host dashboard uses **Supabase Realtime** (WebSockets) so new messages appear instantly without needing to refresh.
 
 ---
 
 ## Features
 
-- ✅ Email sign up / sign in
-- ✅ Auto-generated username & profile on sign up
-- ✅ Search for other users by name or username
-- ✅ Create 1-on-1 conversations instantly
+- ✅ Anonymous messaging — zero identity stored
 - ✅ Real-time message delivery (Supabase Realtime)
-- ✅ Grouped message bubbles (WhatsApp style)
-- ✅ Date dividers in message history
-- ✅ Conversation list with last message preview
-- ✅ Coloured initials avatars
-- ✅ Mobile responsive (sidebar slides in/out)
-- ✅ Dark theme
+- ✅ Shareable link + room code
+- ✅ Host dashboard with message management
+- ✅ Delete individual messages or clear all
+- ✅ Export messages to `.txt`
+- ✅ Native share (Web Share API on mobile)
+- ✅ Dark mode support
+- ✅ Mobile responsive
+- ✅ No authentication required for anyone
 
 ---
 
-## How It Works
+## Security Notes
 
-| Role | Flow |
-|------|------|
-| **New user** | Signs up with email + display name → profile auto-created |
-| **Finding someone** | Search bar in sidebar or "+" button → search by name/username |
-| **Chatting** | Click a user → conversation opens → type and hit Enter or send button |
-| **Real-time** | Messages appear instantly on both sides via Supabase Realtime WebSockets |
+- The Supabase **anon key** is safe to expose in the browser — it only has the permissions defined in Row Level Security (RLS) policies.
+- RLS is enabled on both tables. Anonymous users can read rooms, insert messages, and delete messages. You can tighten this further in Supabase if needed.
+- No IP addresses or identifying information is stored with messages.
 
 ---
 
-## Customisation
+## Customisation Tips
 
-- **Accent color**: change `--kova-accent` in `css/variables.css`
-- **Fonts**: edit the Google Fonts link in `index.html` and `--font-display` / `--font-body` in `variables.css`
-- **Add read receipts**: use the `read_at` column already in the `messages` table
-- **Add avatars/photos**: add a `avatar_url` column to `profiles` and use Supabase Storage
-- **Add group chats**: extend `conversations` to support multiple participants
+- **Change the accent color**: edit `--color-accent` in `css/variables.css`.
+- **Change fonts**: edit the Google Fonts link in `index.html` and `--font-serif` / `--font-sans` in `variables.css`.
+- **Add message reactions**: extend the `messages` table with a `reactions` JSONB column.
+- **Password-protect rooms**: add a `password_hash` column to `rooms` and verify on the client.
